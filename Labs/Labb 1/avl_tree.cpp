@@ -202,34 +202,70 @@ void AVL_Tree_Node<Comparable>::remove(const Comparable &x, Node_Pointer &t)
     {
         remove(x, t->left);
     }
-    else if (t->element < x)
+    else if (x > t->element)
     {
         remove(x, t->right);
     }
     else
     {
         // Sökt värde finns i noden t
-        Node_Pointer tmp;
+        Node_Pointer tmp = t;
 
-        if (t->left != nullptr && t->right != nullptr)
+        /* If one child replace */
+        if (t->right == nullptr)
         {
-            // Noden har två barn och ersätts med inorder efterföljare
+            t = t->left;
+            delete tmp;
+        }
+        else if (t->left == nullptr)
+        {
+            t = t->right;
+            delete tmp;
+        }
+        else if (t->right == nullptr && t->left == nullptr)
+        {
+            /* If a node is a leaf, remove it. */
+            delete t;
+        }
+        else
+        {
+            /* Two children, replace with the smallest in its right subtree (leftmost) */
             tmp = find_min(t->right);
             t->element = tmp->element;
             remove(t->element, t->right);
         }
-        else
+    }
+
+    /* Balance */
+
+    if (t != nullptr)
+    {
+        /* Right side heavy */
+        if (node_height(t->right) - node_height(t->left) == 2)
         {
-            // Noden har inget eller ett barn
-            tmp = t;
-
-            if (t->left == nullptr)
-                t = t->right;
+            if (node_height(t->right->right) - node_height(t->right->left) > 0)
+            {
+                single_rotate_with_right_child(t);
+            }
             else
-                t = t->left;
-
-            delete tmp;
+            {
+                double_rotate_with_right_child(t);
+            }
         }
+        /* Left side heavy */
+        else if (node_height(t->left) - node_height(t->right) == 2)
+        {
+            if (node_height(t->left->left) - node_height(t->left->right) >= 0)
+            {
+                single_rotate_with_left_child(t);
+            }
+            else
+            {
+                double_rotate_with_left_child(t);
+            }
+        }
+
+        calculate_height(t);
     }
 }
 /**
