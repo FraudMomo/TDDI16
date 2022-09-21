@@ -35,10 +35,16 @@ int main(int argc, char *argv[]) {
 
     // Find all possible passwords that hash to 'hashed' and print them.
     map<Key, vector<Key>> encrypted_table;
-    Key firstHalf = table[N / 2];
+    Key firstHalf{};
     Key firstHalfCandidate{};
     Key secondHalfCandidate{};
     Key zero{};
+
+    /* Skip first key (aaaaa)*/
+    firstHalf++;
+    for (int i = 0; i <= N / 2; ++i) {
+        firstHalf += firstHalf;
+    }
 
     /* Loops through all possible combinations of the first half of the
     table.*/
@@ -49,20 +55,17 @@ int main(int argc, char *argv[]) {
         firstHalfCandidate++;
     } while (firstHalfCandidate <= firstHalf);
 
-    firstHalfCandidate = firstHalf;
-
     /* Try the other half of all possible subsets of the table. */
     do {
-        secondHalfCandidate += firstHalfCandidate;
-
         Key enc = subset_sum(secondHalfCandidate, table);
         /* Find occurence of enc in the map. */
         if (encrypted_table.find(enc) != encrypted_table.end()) {
-            for (auto &password : encrypted_table[enc]) {
+            for (Key Pa : encrypted_table[enc]) {
                 /* P = Pa + Pb. */
-                cout << password + secondHalfCandidate << endl;
+                cout << Pa + secondHalfCandidate << endl;
             }
         }
+        secondHalfCandidate += firstHalf;
     } while (secondHalfCandidate != zero);
 
     auto end = chrono::high_resolution_clock::now();
