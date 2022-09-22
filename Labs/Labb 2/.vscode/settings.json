@@ -12,6 +12,9 @@
     "string_view": "cpp",
     "unordered_map": "cpp",
     "vector": "cpp",
-    "__string": "cpp"
+    "__string": "cpp",
+    "bitset": "cpp",
+    "queue": "cpp",
+    "random": "cpp"
   }
 }

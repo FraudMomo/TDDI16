@@ -1,14 +1,24 @@
 #include <chrono>
 #include <iostream>
-#include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "key.h"
 
 using namespace std;
 
-int main(int argc, char *argv[]) {
+struct myhash {
+    size_t operator()(Key const& k) const {
+        size_t result = 5381;
+        for (int i = 0; i < C; i++) {
+            result = ((result << 5) + result) + k.digit[i];
+        }
+        return result;
+    }
+};
+
+int main(int argc, char* argv[]) {
     if (argc != 2) {
         cout << "Usage:" << endl;
         cout << argv[0] << " <hashed password> < rand8.txt" << endl;
@@ -34,38 +44,30 @@ int main(int argc, char *argv[]) {
     auto begin = chrono::high_resolution_clock::now();
 
     // Find all possible passwords that hash to 'hashed' and print them.
-    map<Key, vector<Key>> encrypted_table;
-    Key firstHalf{};
+    unordered_map<Key, vector<Key>, myhash> encrypted_table;
     Key firstHalfCandidate{};
     Key secondHalfCandidate{};
     Key zero{};
 
-    /* Skip first key (aaaaa)*/
-    firstHalf++;
-    for (int i = 0; i <= N / 2; ++i) {
-        firstHalf += firstHalf;
-    }
-
-    /* Loops through all possible combinations of the first half of the
-    table.*/
+    // Loops through all possible combinations of the first half of the table.
     do {
         Key enc = subset_sum(firstHalfCandidate, table);
-        /* subset_sum(Pa , T ) = H − subset_sum(Pb , T ) */
-        encrypted_table[hashed - enc].push_back(firstHalfCandidate);
-        firstHalfCandidate++;
-    } while (firstHalfCandidate <= firstHalf);
-
-    /* Try the other half of all possible subsets of the table. */
+        // subset_sum(Pa, T) = H - subset_sum(Pb, T)
+        encrypted_table[enc].push_back(firstHalfCandidate);
+        ++firstHalfCandidate;
+    } while (!firstHalfCandidate.bit(N / 2 - 1));
+    cout << encrypted_table.size() << endl;
+    // Try the other half of all possible subsets of the table.
     do {
         Key enc = subset_sum(secondHalfCandidate, table);
-        /* Find occurence of enc in the map. */
-        if (encrypted_table.find(enc) != encrypted_table.end()) {
-            for (Key Pa : encrypted_table[enc]) {
-                /* P = Pa + Pb. */
-                cout << Pa + secondHalfCandidate << endl;
+        // Find occurence of enc in the map.
+        if (encrypted_table.find(hashed - enc) != encrypted_table.end()) {
+            for (Key password : encrypted_table[hashed - enc]) {
+                // P = Pa + Pb.
+                cout << password + secondHalfCandidate << endl;
             }
         }
-        secondHalfCandidate += firstHalf;
+        secondHalfCandidate += firstHalfCandidate;
     } while (secondHalfCandidate != zero);
 
     auto end = chrono::high_resolution_clock::now();
