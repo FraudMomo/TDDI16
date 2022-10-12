@@ -1,0 +1,83 @@
+width first
+
+Frågor som ska besvaras:
+1. Vilken är den kortaste ordkedjan från x till y?
+2. Vilken är den längsta av alla kortaste ordkedjor som slutar med ordet x? (förklaras i avsnitt 9)
+
+Fyra filer swedish1, swedish2, english1 och english2
+
+Tidsram: ca 10s, 2s med optimering. Kom ihåg att använda flaggan -02 eller -03 för att optimera koden
+
+Ordlistor ligger i words
+
+Indata:
+Läses in med standard in (ex. cin)
+
+Först läses ordlistan in, ord för ord (a-z, 4 tecken), sista raden markeras med en '#'
+
+Sedan parametrar som avslutas med end of file (Ctrl+D i terminalen)
+
+Om raden har två ord ska den hitta kortaste kedjan mellan dem
+Om raden innehåller ett ord ska den hitta längsta av alla kortaste kedjor som slutar med ordet
+
+Ex.
+IN: aula jama
+UT: aula jama: 5 ord
+    aula -> gula -> gala -> gama -> jama
+
+IN: aula
+UT: aula: 5 ord
+    jama -> gama -> gala -> gula -> aula
+
+Uppgift:
+Implementera find_shortest, och find_longest i wordchain.cpp, funktionerna anropas sedan av read_questions
+Funktionerna ska returnera ordkedjor i form av vector<string>
+
+Kolla på avsnitt 8 tips för testning för att se hur testningen ska gå till
+(ex. cat ordlista.txt - | program)
+
+Kanske:
+Generera delar av grafen när de behövs
+
+       a
+     /   \
+  b        e
+ / \      / \ \
+c   d    f  g  l
+/\  /\      /\
+h i j k     n o
+
+x = "cat"
+
+"aids" -> "goat"
+
+list = ["aids", "aide", ]
+
+charDiff = 2
+charDiff++;
+
+visited = {"aide": "aids", "bids": "aids", "lids": "aids", "rids": "aids", "bide": "aide", "goat": "bide"}
+queue = ["aide", "bids", "lids", "rids"]
+
+map {
+    "aide": {
+        "bide":
+            "goat"
+        "":
+        ...
+    },
+     "bids": {
+       "bide"
+       "":
+       ...
+     },
+     "lids": {
+       "":
+       ...
+     },
+     ... ,
+     rids: {
+       "":
+       ...
+     }
+}
