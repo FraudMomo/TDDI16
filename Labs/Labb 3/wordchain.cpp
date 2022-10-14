@@ -39,33 +39,33 @@ vector<string> find_neighbors(const Dictionary &dict, const string &from) {
  * returneras.
  */
 vector<string> find_shortest(const Dictionary &dict, const string &from,
-                             const string &to, const bool temp2 = true) {
+                             const string &to, const bool find_longest = true) {
     vector<string> result;
 
     map<string, string> visited;
     queue<string> word_queue;
     word_queue.push(from);
-    visited.insert({from, ""});
+    visited[from] = "";
 
-    string current_word{from};
+    string current_word = from;
 
-    while ((!temp2 || current_word != to) && !word_queue.empty()) {
+    while ((!find_longest || current_word != to) && !word_queue.empty()) {
         current_word = word_queue.front();
         word_queue.pop();
         vector<string> neighbors = find_neighbors(dict, current_word);
         for (auto current_neighbor : neighbors) {
             if (visited.find(current_neighbor) == visited.end()) {
                 word_queue.push(current_neighbor);
-                visited.insert({current_neighbor, current_word});
+                visited[current_neighbor] = current_word;
             }
         }
     }
 
-    string temp = current_word;
-    while (temp != from) {
-        string found = visited.find(temp)->second;
-        result.push_back(found);
-        temp = found;
+    if (!find_longest || current_word == to) {
+        while (current_word != "") {
+            result.push_back(current_word);
+            current_word = visited[current_word];
+        }
     }
 
     return result;

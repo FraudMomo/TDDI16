@@ -43,19 +43,22 @@ int main(int argc, const char* argv[]) {
 
     // Välj en punkt p av alla punkterna i datamängden.
     // Sortera alla andra punkter efter lutningen de har gentemot p.
-    for (int i{0}; i < N - 3; ++i) {
-        PolarSorter ps{points[i]};
+    for (int i{0}; i < N; ++i) {
+        const Point origin{points[i]};
+        const PolarSorter ps{points[i]};
 
         // Possbile points map
         map<double, vector<Point>> possible_points;
 
         for (int j{0}; j < N; ++j) {
-            possible_points[points[i].slopeTo(points[j])].push_back(points[j]);
+            const double slope{origin.slopeTo(points[j])};
+            possible_points[slope].push_back(points[j]);
         }
 
         // Find all possible points
         for (auto& p : possible_points) {
             if (p.second.size() >= 3) {
+                p.second.push_back(points[i]);
                 // Sort the points
                 sort(p.second.begin(), p.second.end(), ps);
 
