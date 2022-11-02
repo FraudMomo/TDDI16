@@ -66,6 +66,7 @@ vector<string> find_shortest(const Dictionary &dict, const string &from,
             result.push_back(current_word);
             current_word = visited[current_word];
         }
+        if(find_longest) {reverse(result.begin(), result.end());}
     }
 
     return result;
